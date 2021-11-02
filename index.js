@@ -1,7 +1,8 @@
-import 'usertiming'
+import 'usertiming';
 
-import { AppRegistry } from 'react-native'
+import {AppRegistry} from 'react-native';
+import {name as appName} from './app.json';
 
-import App from './src/components/App'
+import App from './src/components/App';
 
-AppRegistry.registerComponent('react_native_css_in_js_benchmarks', () => App)
+AppRegistry.registerComponent(appName, () => App);

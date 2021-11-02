@@ -1,11 +1,11 @@
-import React from 'react'
-import { ScrollView, Text, View, ViewPropTypes } from 'react-native'
-import { StyleSheet } from 'fela-tools'
+import React from 'react';
+import {ScrollView, Text, View, ViewPropTypes} from 'react-native';
+import {StyleSheet} from 'fela-tools';
 
-import * as colors from '../../../../utils/colors'
-import { getCellColor, toPercent } from '../../../../utils/helpers'
-import { TablePropTypes } from '../../../../utils/types'
-import { wrapRenderer } from '../helpers'
+import * as colors from '../../../../utils/colors';
+import {getCellColor, toPercent} from '../../../../utils/helpers';
+import {TablePropTypes} from '../../../../utils/types';
+import {wrapRenderer} from '../helpers';
 
 const rules = StyleSheet.create({
   table: {},
@@ -20,14 +20,13 @@ const rules = StyleSheet.create({
     textAlign: 'center',
     color: colors.white,
   },
-})
+});
 
-const TableComponent = ({ table, ...props }, { renderer }) => (
+const TableComponent = ({table, ...props}, {renderer}) => (
   <ScrollView
     removeClippedSubviews={false}
     {...props}
-    style={renderer.renderRule(rules.table, props.style)}
-  >
+    style={renderer.renderRule(rules.table, props.style)}>
     {table.map((row, rowIndex) => (
       <View key={`row-${rowIndex}`} style={renderer.renderRule(rules.row)}>
         {row.map((value, columnIndex) => (
@@ -38,8 +37,7 @@ const TableComponent = ({ table, ...props }, { renderer }) => (
               {
                 backgroundColor: getCellColor(parseFloat(value)),
               },
-            ]}
-          >
+            ]}>
             <Text numberOfLines={1} style={renderer.renderRule(rules.text)}>
               {toPercent(value)}
             </Text>
@@ -48,14 +46,14 @@ const TableComponent = ({ table, ...props }, { renderer }) => (
       </View>
     ))}
   </ScrollView>
-)
+);
 
-TableComponent.key = 'fela-inline-table'
-TableComponent.title = 'Fela (Inline)'
+TableComponent.key = 'fela-inline-table';
+TableComponent.title = 'Fela (Inline)';
 
 TableComponent.propTypes = {
   style: ViewPropTypes.style,
   table: TablePropTypes.isRequired,
-}
+};
 
-export default wrapRenderer(TableComponent)
+export default wrapRenderer(TableComponent);

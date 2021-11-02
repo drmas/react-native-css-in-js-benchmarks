@@ -1,8 +1,8 @@
-import PropTypes from 'prop-types'
-import React from 'react'
-import { StyleSheet, Text, View, ViewPropTypes } from 'react-native'
+import PropTypes from 'prop-types';
+import React from 'react';
+import {StyleSheet, Text, View, ViewPropTypes} from 'react-native';
 
-import * as colors from '../../utils/colors'
+import * as colors from '../../utils/colors';
 
 export const styles = StyleSheet.create({
   container: {
@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 12,
   },
-})
+});
 
 const MessageRow = ({
   backgroundColor,
@@ -29,25 +29,23 @@ const MessageRow = ({
     style={[
       styles.container,
       containerStyle,
-      backgroundColor && { backgroundColor },
-    ]}
-  >
+      backgroundColor && {backgroundColor},
+    ]}>
     {typeof children === 'string' ? (
       <Text
         style={[
           styles.text,
           textStyle,
-          bold && { fontWeight: 'bold' },
-          color && { color },
-        ]}
-      >
+          bold && {fontWeight: 'bold'},
+          color && {color},
+        ]}>
         {children}
       </Text>
     ) : (
       children
     )}
   </View>
-)
+);
 
 MessageRow.propTypes = {
   backgroundColor: PropTypes.string,
@@ -56,6 +54,6 @@ MessageRow.propTypes = {
   color: PropTypes.string,
   containerStyle: ViewPropTypes.style,
   textStyle: (Text.propTypes || {}).style,
-}
+};
 
-export default MessageRow
+export default MessageRow;

@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -9,26 +9,27 @@ import {
   StyleSheet,
   Text,
   View,
-} from 'react-native'
+  Clipboard,
+} from 'react-native';
 
-import * as colors from '../utils/colors'
-import Benchmark from './common/Benchmark'
-import Button from './common/Button'
-import MessageRow, { styles as messageRowStyles } from './common/MessageRow'
-import Picker from './common/Picker'
-import { benchmarks } from './benchmarks'
-import { getTableSize, getUniqueSize } from '../utils/helpers'
+import * as colors from '../utils/colors';
+import Benchmark from './common/Benchmark';
+import Button from './common/Button';
+import MessageRow, {styles as messageRowStyles} from './common/MessageRow';
+import Picker from './common/Picker';
+import {benchmarks} from './benchmarks';
+import {getTableSize, getUniqueSize} from '../utils/helpers';
 
 export const benchmarksPickerData = benchmarks.map(benchmark => ({
   key: benchmark.key,
   label: benchmark.title,
-  value: { TableComponent: benchmark },
-}))
+  value: {TableComponent: benchmark},
+}));
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: Platform.select({ android: 0, ios: 21 }),
+    paddingTop: Platform.select({android: 0, ios: 21}),
     backgroundColor: colors.white,
   },
   innerContainer: {
@@ -46,10 +47,10 @@ const styles = StyleSheet.create({
   buttonsContainer: {
     padding: 10,
   },
-})
+});
 
-const mountTimeKey = 'mountTime'
-const renderTimeKey = 'renderTime'
+const mountTimeKey = 'mountTime';
+const renderTimeKey = 'renderTime';
 
 export default class App extends React.PureComponent {
   state = {
@@ -60,53 +61,59 @@ export default class App extends React.PureComponent {
     results: {},
     running: false,
     table: [],
-  }
+  };
 
   async componentWillMount() {
-    const results = await this.rehydrateResults()
+    const results = await this.rehydrateResults();
     this.setState(state => ({
       results: results || state.results,
-    }))
+    }));
   }
 
   componentDidMount() {
-    if (this.picker) this.picker.open()
+    if (this.picker) {
+      this.picker.open();
+    }
   }
 
   getBenchmarkRef = benchmark => {
-    if (benchmark) this.benchmark = benchmark
-    return benchmark
-  }
+    if (benchmark) {
+      this.benchmark = benchmark;
+    }
+    return benchmark;
+  };
 
   getPickerRef = picker => {
-    if (picker) this.picker = picker
-    return picker
-  }
+    if (picker) {
+      this.picker = picker;
+    }
+    return picker;
+  };
 
-  benchmark = null
-  picker = null
+  benchmark = null;
+  picker = null;
 
-  handleGenerateTable = table => this.setState({ table })
+  handleGenerateTable = table => this.setState({table});
 
-  handleGetMountTime = mountTime => this.saveResults(mountTimeKey, mountTime)
+  handleGetMountTime = mountTime => this.saveResults(mountTimeKey, mountTime);
 
   handleGetRenderTime = renderTime =>
-    this.saveResults(renderTimeKey, renderTime, { running: false })
+    this.saveResults(renderTimeKey, renderTime, {running: false});
 
   handleRunButtonPress = () => {
-    this.setState({ running: true }, () => {
+    this.setState({running: true}, () => {
       setTimeout(() => {
-        this.benchmark.runRenderTest()
-      }, 0)
-    })
-  }
+        this.benchmark.runRenderTest();
+      }, 0);
+    });
+  };
 
   handleChangeLibButtonPress = () => {
-    this.picker.open()
-  }
+    this.picker.open();
+  };
 
   handleLibChange = lib => {
-    const isValid = Boolean(lib && lib.TableComponent)
+    const isValid = Boolean(lib && lib.TableComponent);
 
     this.setState(
       {
@@ -117,63 +124,69 @@ export default class App extends React.PureComponent {
         running: isValid,
       },
       () => {
-        if (!isValid) return
+        if (!isValid) {
+          return;
+        }
 
         setTimeout(() => {
-          this.setState({ TableComponent: lib.TableComponent, loading: false })
-        }, 0)
+          this.setState({TableComponent: lib.TableComponent, loading: false});
+        }, 0);
       },
-    )
-  }
+    );
+  };
 
   rehydrateResults = async () => {
-    const results = await AsyncStorage.getItem('results')
-    return (results && JSON.parse(results)) || this.state.results || {}
-  }
+    const results = await AsyncStorage.getItem('results');
+    return (results && JSON.parse(results)) || this.state.results || {};
+  };
 
   clearResults = async () => {
-    this.setState({ results: {} })
-    return AsyncStorage.setItem('results', '{}')
-  }
+    this.setState({results: {}});
+    return AsyncStorage.setItem('results', '{}');
+  };
 
   persistResults = async () =>
-    AsyncStorage.setItem('results', JSON.stringify(this.state.results || {}))
+    AsyncStorage.setItem('results', JSON.stringify(this.state.results || {}));
 
   saveResults = (key, value, otherState = {}) => {
     this.setState(state => {
-      const results = { ...(state.results || {}) }
-      const libResults = { ...(results[state.TableComponent.key] || {}) }
+      const results = {...(state.results || {})};
+      const libResults = {...(results[state.TableComponent.key] || {})};
 
-      libResults[key] = value
-      results[state.TableComponent.key] = libResults
+      libResults[key] = value;
+      results[state.TableComponent.key] = libResults;
 
-      return { [key]: value, results, ...otherState }
-    }, this.persistResults)
-  }
+      return {[key]: value, results, ...otherState};
+    }, this.persistResults);
+  };
 
   handleShowResultsButtonPress = () => {
-    const results = []
+    const results = [];
 
     Object.entries(this.state.results).forEach(([key, libResults]) => {
-      const mountTime = Math.round(libResults[mountTimeKey] || 0)
-      const renderTime = Math.round(libResults[renderTimeKey] || 0)
+      const mountTime = Math.round(libResults[mountTimeKey] || 0);
+      const renderTime = Math.round(libResults[renderTimeKey] || 0);
 
-      results.push({ key, mountTime, renderTime })
-    })
+      results.push({key, mountTime, renderTime});
+    });
 
     const orderedResults = results
       .sort((a, b) => a.renderTime - b.renderTime)
-      .map(result => `${result.key}: ${result.mountTime}, ${result.renderTime}`)
+      .map(
+        result => `${result.key}: ${result.mountTime}, ${result.renderTime}`,
+      );
 
     const resultsStr = `[LIB]: [MOUNT TIME], [RENDER TIME]\n${orderedResults.join(
       '\n',
-    )}`
+    )}`;
+
+    Clipboard.setString(resultsStr);
 
     Alert.alert('Results', resultsStr, [
-      { text: 'OK', onPress: () => {} },
-      { text: 'Reset', onPress: this.clearResults, style: 'destructive' },
-    ])
-  }
+      {text: 'OK', onPress: () => {}},
+      {text: 'Reset', onPress: this.clearResults, style: 'destructive'},
+    ]);
+  };
 
   render() {
     const {
@@ -184,7 +197,7 @@ export default class App extends React.PureComponent {
       results,
       running,
       table,
-    } = this.state
+    } = this.state;
 
     return (
       <SafeAreaView style={styles.container}>
@@ -230,8 +243,8 @@ export default class App extends React.PureComponent {
             )}
           </View>
 
-          <MessageRow containerStyle={{ flexDirection: 'row' }}>
-            <MessageRow containerStyle={{ flex: 1 }}>
+          <MessageRow containerStyle={{flexDirection: 'row'}}>
+            <MessageRow containerStyle={{flex: 1}}>
               <Text style={messageRowStyles.text}>
                 Mount time:{' '}
                 <Text testID="mountTimeText">{`${Math.round(
@@ -240,7 +253,7 @@ export default class App extends React.PureComponent {
               </Text>
             </MessageRow>
 
-            <MessageRow containerStyle={{ flex: 1 }}>
+            <MessageRow containerStyle={{flex: 1}}>
               <Text style={messageRowStyles.text}>
                 Rerender time:{' '}
                 <Text testID="rerenderTimeText">{`${Math.round(
@@ -256,23 +269,21 @@ export default class App extends React.PureComponent {
 
           <View style={styles.buttonsContainer}>
             <Button
-              containerStyle={{ marginBottom: 10 }}
+              containerStyle={{marginBottom: 10}}
               disabled={!TableComponent}
               loading={running && !loading}
               onPress={this.handleRunButtonPress}
-              testID="runButton"
-            >
+              testID="runButton">
               Run again
             </Button>
 
             <Button
-              containerStyle={{ marginBottom: 10 }}
+              containerStyle={{marginBottom: 10}}
               dark
               disabled={running || loading || !Object.keys(results).length}
               onPress={this.handleShowResultsButtonPress}
               outline
-              testID="showResultsButton"
-            >
+              testID="showResultsButton">
               Show Results
             </Button>
 
@@ -281,8 +292,7 @@ export default class App extends React.PureComponent {
                 dark
                 onPress={this.handleChangeLibButtonPress}
                 outline
-                testID="changeCSSLibButton"
-              >
+                testID="changeCSSLibButton">
                 {TableComponent
                   ? 'Change CSS in JS lib'
                   : 'Select CSS in JS lib'}
@@ -299,6 +309,6 @@ export default class App extends React.PureComponent {
           </View>
         </View>
       </SafeAreaView>
-    )
+    );
   }
 }

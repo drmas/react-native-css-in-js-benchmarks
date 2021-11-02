@@ -1,5 +1,5 @@
-import PropTypes from 'prop-types'
-import React from 'react'
+import PropTypes from 'prop-types';
+import React from 'react';
 import {
   ActivityIndicator,
   StyleSheet,
@@ -7,9 +7,9 @@ import {
   View,
   ViewPropTypes,
   TouchableOpacity,
-} from 'react-native'
+} from 'react-native';
 
-import * as colors from '../../utils/colors'
+import * as colors from '../../utils/colors';
 
 const styles = StyleSheet.create({
   container: {},
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     minHeight: 20,
     textAlign: 'center',
   },
-})
+});
 
 const Button = ({
   backgroundColor,
@@ -40,17 +40,16 @@ const Button = ({
   touchableStyle,
   ...props
 }) => {
-  const _textColor = outline ? color : dark ? colors.white : colors.black
-  const _disabled = loading || disabled || !onPress
+  const _textColor = outline ? color : dark ? colors.white : colors.black;
+  const _disabled = loading || disabled || !onPress;
 
   return (
     <View
       style={[
         styles.container,
         containerStyle,
-        { opacity: _disabled ? 0.5 : 1 },
-      ]}
-    >
+        {opacity: _disabled ? 0.5 : 1},
+      ]}>
       <TouchableOpacity
         activeOpacity={0.5}
         disabled={_disabled}
@@ -64,19 +63,17 @@ const Button = ({
           },
           touchableStyle,
         ]}
-        {...props}
-      >
+        {...props}>
         {loading ? (
           <ActivityIndicator animating color={_textColor} />
         ) : typeof children === 'string' ? (
           <Text
             style={[
               styles.text,
-              { color: _textColor },
+              {color: _textColor},
               textStyle,
-              bold && { fontWeight: 'bold' },
-            ]}
-          >
+              bold && {fontWeight: 'bold'},
+            ]}>
             {children}
           </Text>
         ) : (
@@ -84,13 +81,13 @@ const Button = ({
         )}
       </TouchableOpacity>
     </View>
-  )
-}
+  );
+};
 
 Button.defaultProps = {
   color: colors.purple,
   dark: true,
-}
+};
 
 Button.propTypes = {
   backgroundColor: PropTypes.string,
@@ -105,6 +102,6 @@ Button.propTypes = {
   outline: PropTypes.bool,
   textStyle: (Text.propTypes || {}).style,
   touchableStyle: ViewPropTypes.style,
-}
+};
 
-export default Button
+export default Button;
